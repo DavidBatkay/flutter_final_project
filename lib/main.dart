@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +10,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'Cosmic Oracle',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.deepPurple,
+        useMaterial3: true,
       ),
+      home: const HomeScreen(),
     );
   }
 }
