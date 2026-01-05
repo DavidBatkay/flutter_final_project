@@ -58,8 +58,10 @@ class _HomeScreenState extends State<HomeScreen>
 
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
-        currentPrediction =
-            defaultPredictions[Random().nextInt(defaultPredictions.length)];
+        final predictions = DataManager().activeConfig.predictions;
+        currentPrediction = predictions.isNotEmpty
+            ? predictions[Random().nextInt(predictions.length)]
+            : null;
         _opacity = 1.0;
       });
     });
@@ -73,10 +75,12 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.of(context).push(
+            onPressed: () async {
+              await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
+              // Refresh state when returning from settings (in case active config changed)
+              setState(() {});
             },
           ),
         ],
