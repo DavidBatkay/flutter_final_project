@@ -5,6 +5,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'prediction_model.dart';
 import 'data.dart';
 import 'settings_screen.dart';
+import 'prediction_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   Prediction? currentPrediction;
-  double _opacity = 0.0;
+  double _opacity = 1.0;
   StreamSubscription? _subscription;
   DateTime _lastShakeTime = DateTime.now();
   late AnimationController _animController;
@@ -109,12 +110,11 @@ class _HomeScreenState extends State<HomeScreen>
                     );
                   },
                   child: Stack(
-                    alignment: Alignment.center,
+                    alignment: const Alignment(0, -0.15),
                     children: [
                       Image.asset(
                         'assets/magic_8_ball.png',
-                        width: 300,
-                        height: 300,
+                        width: 334,
                       ),
                       Container(
                         width: 160,
@@ -136,9 +136,9 @@ class _HomeScreenState extends State<HomeScreen>
                             AnimatedOpacity(
                               duration: const Duration(milliseconds: 500),
                               opacity: _opacity,
-                              child: _buildPredictionContent(),
+                              child: PredictionWidget(
+                                  prediction: currentPrediction),
                             ),
-
                             Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
@@ -168,63 +168,5 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
     );
-  }
-
-  Widget _buildPredictionContent() {
-    if (currentPrediction == null) {
-      return const Text(
-        "8",
-        style: TextStyle(fontSize: 80, color: Colors.white12),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: CustomPaint(
-        painter: TrianglePainter(color: currentPrediction!.color),
-        child: Container(
-          width: 120,
-          height: 120,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            currentPrediction!.text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TrianglePainter extends CustomPainter {
-  final Color color;
-
-  TrianglePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final path = Path();
-
-    path.moveTo(0, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width / 2, size.height);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant TrianglePainter oldDelegate) {
-    return oldDelegate.color != color;
   }
 }

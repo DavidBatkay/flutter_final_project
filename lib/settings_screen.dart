@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'data.dart';
 import 'prediction_model.dart';
+import 'paywall_widget.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -28,62 +29,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
         ],
       ),
-      body: isPremium ? _buildConfigList() : _buildPaywall(),
+      body: isPremium
+          ? _buildConfigList()
+          : PaywallWidget(onUpgrade: () => setState(() {})),
       floatingActionButton: isPremium
           ? FloatingActionButton(
               onPressed: () => _openEditor(),
               child: const Icon(Icons.add),
             )
           : null,
-    );
-  }
-
-  Widget _buildPaywall() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.diamond, size: 80, color: Colors.amber),
-            const SizedBox(height: 20),
-            const Text(
-              "Unlock Cosmic Powers",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Create your own custom 8-ball configurations, colors, and answers!",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.white70),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurpleAccent,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-              ),
-              onPressed: () async {
-                // Simulate Google Play purchase
-                await DataManager().setPremium(true);
-                setState(() {});
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Welcome to Pro!")),
-                  );
-                }
-              },
-              child: const Text(
-                "Upgrade to Pro - \$4.99",
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -270,8 +224,10 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
                                 readOnly: _isDefault,
                                 onChanged: (val) =>
                                     _predictions[index].text = val,
+                                maxLength: 40,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
+                                  counterText: "",
                                 ),
                               ),
                             ),
@@ -304,7 +260,8 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
                                     decoration: BoxDecoration(
                                       color: color,
                                       shape: BoxShape.circle,
-                                      border: _predictions[index].color == color
+                                      border: _predictions[index].color.value ==
+                                              color.value
                                           ? Border.all(
                                               color: Colors.white,
                                               width: 2,
